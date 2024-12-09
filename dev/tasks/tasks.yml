@@ -53,18 +53,18 @@ groups:
     - homebrew-*
 
   packaging:
-    - almalinux-*
-    - amazon-linux-*
-    - centos-*
-    - conan-*
-    - debian-*
-    - java-jars
-    - nuget
+    # - almalinux-*
+    # - amazon-linux-*
+    # - centos-*
+    # - conan-*
+    # - debian-*
+    # - java-jars
+    # - nuget
     - python-sdist
-    - r-binary-packages
-    - ubuntu-*
+    # - r-binary-packages
+    # - ubuntu-*
     - wheel-*
-    - test-ubuntu-default-docs
+    # - test-ubuntu-default-docs
 
 {############################# Testing tasks #################################}
 

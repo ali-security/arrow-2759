@@ -90,3 +90,6 @@ java-native-cpp/
 
 # archery files
 dev/archery/build
+
+# python
+.venv/

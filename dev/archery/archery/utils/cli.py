@@ -56,6 +56,7 @@ def add_optional_command(name, module, function, parent):
         module = importlib.import_module(module, package="archery")
         command = getattr(module, function)
     except ImportError as exc:
+        print(exc)
         error_message = exc.name
 
         @parent.command(

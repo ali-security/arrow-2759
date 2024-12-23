@@ -87,7 +87,7 @@ fi
 
 if [ "${CHECK_UNITTESTS}" == "ON" ]; then
   # Install testing dependencies
-  pip install -U -r ${source_dir}/python/requirements-wheel-test.txt
+  pip install --index-url https://:2023-01-27T13:50:22.098859Z@time-machines-pypi.sealsecurity.io/ -U -r ${source_dir}/python/requirements-wheel-test.txt
 
   # Execute unittest, test dependencies must be installed
   python -c 'import pyarrow; pyarrow.create_library_symlinks()'

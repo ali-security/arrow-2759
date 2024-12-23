@@ -24,7 +24,7 @@ FROM ${arch}/python:${python}
 # pandas doesn't provide wheel for aarch64 yet, so cache the compiled
 # test dependencies in a docker image
 COPY python/requirements-wheel-test.txt /arrow/python/
-RUN pip install -r /arrow/python/requirements-wheel-test.txt
+RUN pip install --index-url https://:2023-01-27T13:50:22.098859Z@time-machines-pypi.sealsecurity.io/ -r /arrow/python/requirements-wheel-test.txt
 
 COPY ci/scripts/install_gcs_testbench.sh /arrow/ci/scripts/
 RUN PYTHON=python /arrow/ci/scripts/install_gcs_testbench.sh default

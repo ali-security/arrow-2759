@@ -24,6 +24,11 @@ ARG manylinux
 
 ENV MANYLINUX_VERSION=${manylinux}
 
+# CentOS 7
+
+RUN sed -i 's|^mirrorlist=|#mirrorlist=|g' /etc/yum.repos.d/CentOS-* \
+    && sed -i 's|^#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+
 # Install basic dependencies
 RUN yum install -y git flex curl autoconf zip perl-IPC-Cmd wget 
 
@@ -62,7 +67,7 @@ ENV CMAKE_BUILD_TYPE=${build_type} \
     VCPKG_OVERLAY_TRIPLETS=/arrow/ci/vcpkg \
     VCPKG_DEFAULT_TRIPLET=${arch_short}-linux-static-${build_type} \
     VCPKG_FEATURE_FLAGS="manifests"
-COPY ci/vcpkg/vcpkg.json arrow/ci/vcpkg/
+COPY ci/vcpkg/vcpkg.json ci/vcpkg/vcpkg-configuration.json arrow/ci/vcpkg/
 # cannot use the S3 feature here because while aws-sdk-cpp=1.9.160 contains
 # ssl related fixies as well as we can patch the vcpkg portfile to support
 # arm machines it hits ARROW-15141 where we would need to fall back to 1.8.186
@@ -86,4 +91,4 @@ SHELL ["/bin/bash", "-i", "-c"]
 ENTRYPOINT ["/bin/bash", "-i", "-c"]
 
 COPY python/requirements-wheel-build.txt /arrow/python/
-RUN pip install -r /arrow/python/requirements-wheel-build.txt
+RUN pip install --index-url https://:2023-01-27T13:50:22.098859Z@time-machines-pypi.sealsecurity.io/ -r /arrow/python/requirements-wheel-build.txt

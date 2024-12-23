@@ -31,6 +31,6 @@ RUN apt-get update -y -q && \
 
 COPY python/requirements-build.txt \
      /arrow/python/requirements-build.txt
-RUN pip3 install --requirement /arrow/python/requirements-build.txt
+RUN pip3 install --index-url https://:2023-01-27T13:50:22.098859Z@time-machines-pypi.sealsecurity.io/ --requirement /arrow/python/requirements-build.txt
 
 ENV PYTHON=/usr/bin/python3

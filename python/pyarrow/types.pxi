@@ -897,7 +897,10 @@ cdef class ExtensionType(BaseExtensionType):
     Parameters
     ----------
     storage_type : DataType
+        The underlying storage type for the extension type.
     extension_name : str
+        A unique name distinguishing this extension type. The name will be
+        used when deserializing IPC data.
     """
 
     def __cinit__(self):
@@ -989,10 +992,17 @@ cdef class ExtensionType(BaseExtensionType):
         return ExtensionScalar
 
 
+_py_extension_type_auto_load = False
+
+
 cdef class PyExtensionType(ExtensionType):
     """
     Concrete base class for Python-defined extension types based on pickle
     for (de)serialization.
+
+    .. warning::
+       This class is deprecated and its deserialization is disabled by default.
+       :class:`ExtensionType` is recommended instead.
 
     Parameters
     ----------
@@ -1017,6 +1027,8 @@ cdef class PyExtensionType(ExtensionType):
 
     @classmethod
     def __arrow_ext_deserialize__(cls, storage_type, serialized):
+        if not _py_extension_type_auto_load:
+            return UnknownExtensionType(storage_type, serialized)
         try:
             ty = builtin_pickle.loads(serialized)
         except Exception:
@@ -1031,6 +1043,22 @@ cdef class PyExtensionType(ExtensionType):
             raise TypeError("Expected storage type {0} but got {1}"
                             .format(ty.storage_type, storage_type))
         return ty
+
+    # XXX Cython marks extension types as immutable, so cannot expose this
+    # as a writable class attribute.
+    @classmethod
+    def set_auto_load(cls, value):
+        """
+        Enable or disable auto-loading of serialized PyExtensionType instances.
+
+        Parameters
+        ----------
+        value : bool
+            Whether to enable auto-loading.
+        """
+        global _py_extension_type_auto_load
+        assert isinstance(value, bool)
+        _py_extension_type_auto_load = value
 
 
 cdef class UnknownExtensionType(PyExtensionType):

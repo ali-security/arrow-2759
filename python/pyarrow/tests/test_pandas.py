@@ -3957,13 +3957,23 @@ def test_array_protocol():
     assert result.equals(expected2)
 
 
-class DummyExtensionType(pa.PyExtensionType):
+class DummyExtensionType(pa.ExtensionType):
 
     def __init__(self):
-        pa.PyExtensionType.__init__(self, pa.int64())
+        super(self, DummyExtensionType).__init__(pa.int64(),
+                         'pyarrow.tests.test_pandas.DummyExtensionType')
 
     def __reduce__(self):
         return DummyExtensionType, ()
+
+    def __arrow_ext_serialize__(self):
+        return b''
+
+    @classmethod
+    def __arrow_ext_deserialize__(cls, storage_type, serialized):
+        assert serialized == b''
+        assert storage_type == pa.int64()
+        return cls()
 
 
 def PandasArray__arrow_array__(self, type=None):
@@ -4059,13 +4069,17 @@ def test_convert_to_extension_array(monkeypatch):
     assert not isinstance(result._data.blocks[0], _int.ExtensionBlock)
 
 
-class MyCustomIntegerType(pa.PyExtensionType):
+class MyCustomIntegerType(pa.ExtensionType):
 
     def __init__(self):
-        pa.PyExtensionType.__init__(self, pa.int64())
+        super(self, MyCustomIntegerType).__init__(pa.int64(),
+                         'pyarrow.tests.test_pandas.MyCustomIntegerType')
 
     def __reduce__(self):
         return MyCustomIntegerType, ()
+
+    def __arrow_ext_serialize__(self):
+        return b''
 
     def to_pandas_dtype(self):
         return pd.Int64Dtype()
